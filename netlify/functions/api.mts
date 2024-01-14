@@ -16,6 +16,11 @@ export default async (req: Request, context: Context) => {
   }
   const body = await req.formData()
 
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST'
+  };
+
   try {
     await mailer.sendMail({
       from: body.get("from")?.toString() || Netlify.env.get("GMAIL_ADDRESS"),
@@ -23,8 +28,8 @@ export default async (req: Request, context: Context) => {
       subject: body.get("subject")?.toString() || "[No subject]",
       html: body.get("message")?.toString() || "[No message]",
     })
-    return new Response("Ok", {status: 200})
+    return new Response("Ok", { status: 200, ...headers })
   } catch (error) {
-    return new Response("Error: " + error, { status: 500 })
+    return new Response("Error: " + error, { status: 500, ...headers })
   }
 }
